@@ -1,0 +1,27 @@
+.canvas {
+  position: relative;
+  width: 100%;
+  // max-height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // justify-content: center;
+  overflow: scroll;
+  background-color: #DDDDDD;
+
+  button {
+    top: 2em;
+    left: 4em;
+    position: absolute;
+    color: white;
+    background-color: $color-primary;
+  }
+
+  &-page {
+    min-width: 500px;
+    min-height: 500px;
+    margin: 2em 0em;
+    background-color: $color-white;
+  }
+}
