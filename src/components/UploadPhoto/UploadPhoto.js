@@ -1,57 +1,92 @@
-import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { ChromePicker, GithubPicker } from "react-color";
-import ImagesContainer from "../ImagesContainer/ImagesContainer";
+import React, { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
-import ColorizeIcon from "@material-ui/icons/Colorize";
+import { useDropzone } from "react-dropzone";
+import ImagesContainer from "../ImagesContainer/ImagesContainer";
+import ControlPanelTip from "../ControlPanelTip/ControlPanelTip";
+
+import {
+  uploadStarted,
+  uploadAdded,
+  uploadEnded,
+  allUploadsSelected,
+  allUploadsUnSelected,
+  uploadSelected,
+} from "../../store/uploads";
+import { bytesToSize } from "../../utils/utilityFunctions";
+import FileDropZone from "../FileDropZone/FileDropZone";
 
 const UploadPhotoPanel = () => {
-  const [picker, setPicker] = useState(false);
+  const dispatch = useDispatch();
+  const uploads = useSelector((state) => state.uploads);
+  const selectedUploads = useSelector((state) =>
+    state.uploads.files.filter((value) => value.selected === true)
+  );
+
+  const onSelectImage = (id) => dispatch(uploadSelected({ id }));
+  const onSelectAllImages = () => dispatch(allUploadsSelected());
+  const onUnSelectAllImages = () => dispatch(allUploadsUnSelected());
 
   const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
+    let totalSizeInBytes = 0;
+    dispatch(uploadStarted());
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+      totalSizeInBytes += file.size;
+      reader.readAsDataURL(file);
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        dispatch(
+          uploadAdded({
+            path: file.path,
+            name: file.name,
+            url: reader.result,
+            selected: false,
+          })
+        );
+      };
+    });
+    console.log(bytesToSize(totalSizeInBytes), "Total Size");
+    dispatch(uploadEnded());
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
   return (
     <div className="control-panel">
-      <div {...getRootProps({ className: "dropzone" })}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-      </div>
+      <div className="crop-controls">
+        {/* <div {...getRootProps({ className: "dropzone" })}>
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        </div> */}
 
-      <ImagesContainer />
+        <FileDropZone />
 
-      <div className="handle-control">
-        <p>Handle</p>
-        <input name="handle" placeholder="@YourHanlde" />
-        <br />
-        <hr />
+        <ImagesContainer
+          selectedType="selected"
+          header="Uploaded Images"
+          images={uploads.files}
+          onSelectImage={onSelectImage}
+        />
 
-        <div className="handle-control-colors">
-          <GithubPicker />
-          <div
-            style={picker ? { display: "block" } : {}}
-            className="handle-control-picker"
-          >
-            <ChromePicker />
-          </div>
-          <Button
-            onClick={() => setPicker(!picker)}
-            fullWidth
-            variant="contained"
-            startIcon={<ColorizeIcon />}
-          >
-            Color Picker
+        <div className="crop-controls-info">
+          <p>Total images uploaded: {uploads.files.length}</p>
+          <p>Total images selected: {selectedUploads.length}</p>
+        </div>
+
+        <div className="crop-controls-buttons">
+          <Button variant="contained" onClick={onSelectAllImages}>
+            select all images
+          </Button>
+          <Button variant="contained" onClick={onUnSelectAllImages}>
+            unselect all images
           </Button>
         </div>
-        {/* <div className="handle-control-colors">
-          <div className="selected"></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div> */}
       </div>
+
+      <ControlPanelTip tip="Tip: Select images you want to crop and drag them on the artboard." />
     </div>
   );
 };

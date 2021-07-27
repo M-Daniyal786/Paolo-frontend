@@ -1,111 +1,101 @@
-.control-panel {
-  width: 500px;
-  height: calc(100vh - 70px);
-  overflow: scroll;
-  background-color: $color-gray;
+@import '../IphoneMockup/iphoneMockup.scss';
 
-  &-device-screen {
-    height: 100%;
-    display: flex;
-    background-color: white;
-    justify-content: space-between;
-    flex-direction: column;
+.dropzone {
+
+  color: $color-white;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  cursor: pointer;
+
+  padding: 1em;
+  border: 2px dashed $color-white;
+}
+
+.uploaded-images {
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  p {
+    margin: 1em 0;
+    color: white;
+    font-size: 1.6em;
   }
 
-  &-device {
+  .uploaded-image-container {
+
+    width: 100%;
+    height: 30em;
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    padding: 1em 1em;
+    overflow: scroll;
+    align-items: center;
     justify-content: center;
+    border: 0.2em dashed white;
 
 
-
-    svg {
-      font-size: 2em;
-      color: $color-gray;
+    img {
+      max-width: 8em;
+      margin: 0.2em 0.5em;
+      cursor: pointer;
+      background-color: chocolate;
     }
+
   }
 
-  img {
-    width: 72px;
-    margin: 0.03em 0em;
-    border: 0.01em solid white;
-  }
+}
 
-  &-device-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 3.3em;
-    padding: 0 1em;
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  }
+.control-panel {
+  width: 500px;
+  font-size: 1em;
+  padding: 1.4em;
+  overflow: scroll;
+  height: calc(100vh - 70px);
+  background-color: $color-gray;
 
-  .dropzone {
-
-    color: $color-white;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2em;
-    cursor: pointer;
-
-    margin: 1.4em;
-    padding: 1em;
-    border: 2px dashed $color-white;
-    // background-color: red;
-  }
-
-  .uploaded-images {
-
-    margin: 1.4em;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+  &-tip {
+    text-align: center;
 
     p {
-      margin: 1em 0;
-      color: white;
-      font-size: 1.6em;
+      font-size: 1.1em;
+      color: $color-white;
     }
+  }
 
-    .uploaded-image-container {
+  button {
+    margin: 1em 0;
+  }
 
+
+  .crop-controls-info {
+    display: flex;
+    margin: .8em 0;
+    font-size: 1.2em;
+    color: $color-white;
+    justify-content: space-between;
+  }
+
+  .crop-controls {
+    &-buttons {
       display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      align-items: center;
-      border: 0.2em dashed white;
-      padding: 1em 1em;
-      height: 20em;
-      overflow: scroll;
-      // justify-content: center;
+      justify-content: space-between;
 
-
-      img {
-        max-width: 8em;
-        margin: 0.2em 0.5em;
-        cursor: pointer;
-        background-color: chocolate;
-
-        &:hover {
-          transform: scale(1.1);
-        }
+      button {
+        width: 45%;
       }
-
     }
-
   }
 
   .handle-control {
-    // width: 100%;
-    margin: 1.4em;
     display: flex;
     flex-direction: column;
 
-    p {
+    &-label {
       margin: 1em 0;
       align-self: center;
       color: $color-white;
@@ -122,53 +112,84 @@
     }
 
     &-colors {
-      // display: flex;
-      // align-items: center;
-      // justify-content: space-between;
-
-
 
       .github-picker {
         margin: 2.6em auto;
-        transform: scale(1.3);
+        // transform: scale(1.3);
       }
 
       .chrome-picker {
         margin: 1.4em auto;
       }
 
-      // div {
-      //   width: 7em;
-      //   height: 7em;
-      //   border: 0.2em solid $color-black;
-      //   margin: 1em 0;
-      //   cursor: pointer;
-      // }
+    }
+  }
 
-      // div.selected {
-      //   border: 0.2em solid $color-white;
-      // }
+  .gallery-control {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-      // div:nth-child(1) {
-      //   background-color: teal;
-      // }
+    .device-body {
+      height: 92%;
+      display: flex;
+      align-items: flex-start;
+      // justify-content: flex-start;
+      overflow: scroll;
 
-      // div:nth-child(2) {
-      //   background-color: coral;
-      // }
+      img {
+        width: 33.33%;
+        position: relative;
+        border: 0.01em solid white;
 
-      // div:nth-child(3) {
-      //   background-color: crimson;
-      // }
 
-      // div:nth-child(4) {
-      //   background-color: yellow;
-      // }
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      .dragable-icon {
+        top: 0;
+        left: 0;
+        cursor: grab;
+        width: 1.6em;
+        height: 1.6em;
+        display: flex;
+        position: absolute;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 200, 0, 0.4);
+
+
+      }
+
+      .dragable-icon:nth-child(4) {
+        left: 33.3%;
+      }
+
+      .dragable-icon:nth-child(6) {
+        left: 66.3%;
+      }
+
+    }
+
+    .device-footer {
+      height: 8%;
+      padding: 0 1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: white;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
   }
 
   .split-btn-container {
     margin: 1.4em;
   }
+
+  .insta-split-controls {}
 
 }

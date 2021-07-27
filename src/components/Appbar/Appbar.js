@@ -6,7 +6,8 @@ import CreateIcon from "@material-ui/icons/Create";
 import PaymentIcon from "@material-ui/icons/Payment";
 import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 
-const Appbar = () => {
+const Appbar = (props) => {
+  const { projectName, setProjectName, onClickDownload, onClickDonate } = props;
   return (
     <div className="appbar">
       <div className="appbar-left">
@@ -15,7 +16,11 @@ const Appbar = () => {
 
       <div className="appbar-right">
         <div>
-          <Button variant="contained" startIcon={<SaveIcon />}>
+          <Button
+            variant="contained"
+            startIcon={<SaveIcon />}
+            onClick={onClickDownload}
+          >
             Save
           </Button>
           <Button variant="contained" startIcon={<CreateIcon />}>
@@ -24,16 +29,28 @@ const Appbar = () => {
         </div>
 
         {/* <p>Project Title - Untitled</p> */}
-        <input placeholder="Project Title - Untitled" />
+        <input
+          placeholder="Project Title - Untitled"
+          value={projectName ? projectName : ""}
+          onChange={(event) => setProjectName(event.target.value)}
+        />
 
         <div>
-          <Button variant="contained" startIcon={<PaymentIcon />}>
+          <Button
+            variant="contained"
+            onClick={onClickDonate}
+            startIcon={<PaymentIcon />}
+          >
             Donate
           </Button>
           <Button variant="contained" startIcon={<ShareIcon />}>
             Share
           </Button>
-          <Button variant="contained" startIcon={<CloudDownloadIcon />}>
+          <Button
+            onClick={onClickDownload}
+            variant="contained"
+            startIcon={<CloudDownloadIcon />}
+          >
             Download
           </Button>
         </div>

@@ -5,6 +5,8 @@ import { ChromePicker, GithubPicker } from "react-color";
 import UploadPhotoPanel from "../UploadPhoto/UploadPhoto";
 import PreviewPhotoPanel from "../PreviewPhotos/PreviewPhotos";
 import PhotoSplit from "../PhotoSplit/PhotoSplit";
+import AddHandle from "../AddHandle/AddHandle";
+import PhotoSplitPanel from "../PhotoSplitPanel/PhotoSplitPanel";
 
 const Panel = (props) => {
   const { active } = props;
@@ -14,8 +16,10 @@ const Panel = (props) => {
       case 0:
         return <UploadPhotoPanel />;
       case 1:
-        return <PhotoSplit />;
+        return <AddHandle />;
       case 2:
+        return <PhotoSplitPanel />;
+      case 3:
         return <PreviewPhotoPanel />;
       default:
         break;

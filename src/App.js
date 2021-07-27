@@ -1,32 +1,57 @@
-import React, { useRef, useState } from "react";
-import Cropper from "react-cropper";
+import React, { useState } from "react";
 import "cropperjs/dist/cropper.css";
-import Sidebar from "./components/Sidebar/Sidebar";
-import ControlPanel from "./components/ControlPanel/ControlPanel";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import Appbar from "./components/Appbar/Appbar";
 import Canvas from "./components/Canvas/Canvas";
+import Sidebar from "./components/Sidebar/Sidebar";
+import ControlPanel from "./components/ControlPanel/ControlPanel";
+import { useDispatch, useSelector } from "react-redux";
+import { downloadImages } from "./utils/utilityFunctions";
+import Modal from "./components/Modal/Modal";
+import { modalOpened, modalTypeChanged } from "./store/UI";
 
 const App = () => {
+  const dispatch = useDispatch();
   const [active, setActive] = useState(0);
+  const [croppers, setCroppers] = useState([]);
+  const [projectName, setProjectName] = useState();
+
+  const UI = useSelector((state) => state.UI);
+
+  const onDownloadCroppedData = () => {
+    let allCroppedData = [];
+    croppers.forEach((value) => {
+      allCroppedData.push(value.getCroppedCanvas().toDataURL());
+    });
+    downloadImages(allCroppedData, projectName ? projectName : "default");
+  };
+
+  const onDonate = () => {
+    dispatch(modalOpened());
+    dispatch(modalTypeChanged("donate"));
+  };
 
   return (
     <>
-      <Appbar />
-      <div className="container">
-        <Sidebar active={active} setActive={setActive} />
-        <ControlPanel active={active} />
-        <Canvas />
-        {/* <div>
-          <Cropper
-            src="https://raw.githubusercontent.com/roadmanfong/react-cropper/master/example/img/child.jpg"
-            initialAspectRatio={1 / 1}
-            viewMode={0}
-            dragMode="move"
-            wheelZoomRatio={0.05}
-            style={{ width: "100%", height: "100%", backgroundColor: "teal" }}
+      <DndProvider backend={HTML5Backend}>
+        <Appbar
+          projectName={projectName}
+          onClickDonate={onDonate}
+          setProjectName={setProjectName}
+          onClickDownload={onDownloadCroppedData}
+        />
+        <div className="container">
+          <Sidebar active={active} setActive={setActive} />
+          <ControlPanel active={active} />
+          <Canvas
+            active={active}
+            croppers={croppers}
+            setCroppers={setCroppers}
           />
-        </div> */}
-      </div>
+          {UI.modal ? <Modal /> : null}
+        </div>
+      </DndProvider>
     </>
   );
 };

@@ -15,18 +15,26 @@ const Sidebar = (props) => {
           className={active === 0 ? "selected" : ""}
         >
           <BackupIcon fontSize="large" />
-          <p>Upload Photo(s)</p>
+          <p>Upload & Crop</p>
         </li>
         <li
           onClick={() => setActive(1)}
           className={active === 1 ? "selected" : ""}
         >
-          <VerticalSplitIcon fontSize="large" />
-          <p>Photo Split</p>
+          <p style={{ fontSize: "20px", marginBottom: "6px" }}>@</p>
+          {/* <BackupIcon fontSize="large" /> */}
+          <p>Add Hanlde</p>
         </li>
         <li
           onClick={() => setActive(2)}
           className={active === 2 ? "selected" : ""}
+        >
+          <VerticalSplitIcon fontSize="large" />
+          <p>Photo Split</p>
+        </li>
+        <li
+          onClick={() => setActive(3)}
+          className={active === 3 ? "selected" : ""}
         >
           <StayCurrentPortraitIcon fontSize="large" />
           <p>Feed Preview</p>
