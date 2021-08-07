@@ -1,13 +1,21 @@
 import React from "react";
 import { Button } from "@material-ui/core";
-import SaveIcon from "@material-ui/icons/Save";
 import ShareIcon from "@material-ui/icons/Share";
 import CreateIcon from "@material-ui/icons/Create";
 import PaymentIcon from "@material-ui/icons/Payment";
 import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 const Appbar = (props) => {
-  const { projectName, setProjectName, onClickDownload, onClickDonate } = props;
+  const {
+    projectName,
+    onClickLogin,
+    onClickShare,
+    onClickDonate,
+    setProjectName,
+    onClickDownload,
+  } = props;
+
   return (
     <div className="appbar">
       <div className="appbar-left">
@@ -18,10 +26,10 @@ const Appbar = (props) => {
         <div>
           <Button
             variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={onClickDownload}
+            onClick={onClickShare}
+            startIcon={<ShareIcon />}
           >
-            Save
+            Share
           </Button>
           <Button variant="contained" startIcon={<CreateIcon />}>
             Write Us
@@ -43,15 +51,20 @@ const Appbar = (props) => {
           >
             Donate
           </Button>
-          <Button variant="contained" startIcon={<ShareIcon />}>
-            Share
-          </Button>
+
           <Button
             onClick={onClickDownload}
             variant="contained"
             startIcon={<CloudDownloadIcon />}
           >
             Download
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AccountCircleIcon />}
+            onClick={onClickLogin}
+          >
+            Login
           </Button>
         </div>
       </div>

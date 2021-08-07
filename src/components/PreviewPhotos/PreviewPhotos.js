@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HomeIcon from "@material-ui/icons/Home";
 import SearchIcon from "@material-ui/icons/Search";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
@@ -6,40 +6,46 @@ import ControlPointIcon from "@material-ui/icons/ControlPoint";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { useDispatch, useSelector } from "react-redux";
 import IphoneMockup from "../IphoneMockup/IphoneMockup";
-import {
-  croppedImageFocused,
-  croppedImagesSorted,
-} from "../../store/croppedImages";
-import {
-  List,
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache,
-} from "react-virtualized";
+import { List, AutoSizer, CellMeasurerCache } from "react-virtualized";
 import DragableImage from "../DragableImage/DragableImage";
+import {
+  getSelectedFiles,
+  imageFocused,
+  uploadsSorted,
+} from "../../store/uploads";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import MenuIcon from "@material-ui/icons/Menu";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 const PreviewPhotoPanel = () => {
   const dispatch = useDispatch();
-  const cache = useRef(
-    new CellMeasurerCache({ fixedWidth: true, defaultHeight: 150 })
-  );
-  const croppedImages = useSelector((state) => state.croppedImages);
+  const uploads = useSelector((state) => state.uploads);
+  const [croppedImages, setCroppedImages] = useState([]);
 
-  const onSelectImage = (imageId) =>
-    dispatch(croppedImageFocused({ id: imageId }));
+  const onSelectImage = (imageId) => dispatch(imageFocused({ id: imageId }));
 
   const onRearrangeImages = (newIndex, oldIndex) =>
-    dispatch(croppedImagesSorted({ dragged: oldIndex, dropedOn: newIndex }));
+    dispatch(uploadsSorted({ oldIndex, newIndex }));
+
+  useEffect(() => {
+    setCroppedImages(uploads.files.filter((value) => value.croppedURL));
+  }, [uploads]);
 
   return (
     <div className="control-panel">
       <div className="gallery-control">
         <IphoneMockup>
+          <div className="device-header">
+            <ArrowBackIosIcon />
+            <p>Header</p>
+            <MoreHorizIcon />
+          </div>
           <div className="device-body">
             <AutoSizer>
               {({ width, height }) => {
+                console.log(croppedImages);
                 const itemsPerRow = 3;
-                const rowCount = Math.ceil(croppedImages.files.length / 3);
+                const rowCount = Math.ceil(croppedImages.length / 3);
 
                 return (
                   <List
@@ -54,35 +60,25 @@ const PreviewPhotoPanel = () => {
                       const fromIndex = index * itemsPerRow;
                       const toIndex = Math.min(
                         fromIndex + 3,
-                        croppedImages.files.length
+                        croppedImages.length
                       );
 
                       for (let i = fromIndex; i < toIndex; i++) {
-                        items.push(
-                          <DragableImage
-                            key={i}
-                            index={croppedImages.files[i].id}
-                            src={croppedImages.files[i].url}
-                            alt={`cropped ${croppedImages.files[i].id}`}
-                            dropable={true}
-                            onSelect={() =>
-                              onSelectImage(croppedImages.files[i].id)
-                            }
-                            onRearrangeImages={onRearrangeImages}
-                          />
-                        );
+                        if (croppedImages[i].croppedURL)
+                          items.push(
+                            <DragableImage
+                              key={i}
+                              dropable={true}
+                              index={croppedImages[i].id}
+                              src={croppedImages[i].croppedURL}
+                              onRearrangeImages={onRearrangeImages}
+                              alt={`cropped ${croppedImages[i].id}`}
+                              onSelect={() =>
+                                onSelectImage(croppedImages[i].id)
+                              }
+                            />
+                          );
                       }
-                      // return (
-                      //   <CellMeasurer
-                      //     key={key}
-                      //     parent={parent}
-                      //     columnIndex={0}
-                      //     rowIndex={index}
-                      //     cache={cache.current}
-                      //   >
-                      //     <div style={style}>{items}</div>
-                      //   </CellMeasurer>
-                      // );
                       return <div style={style}>{items}</div>;
                     }}
                   />

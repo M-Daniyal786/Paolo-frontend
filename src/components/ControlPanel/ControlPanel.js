@@ -1,11 +1,7 @@
-import { Button, TextField } from "@material-ui/core";
-import React, { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import { ChromePicker, GithubPicker } from "react-color";
+import React from "react";
+import AddHandle from "../AddHandle/AddHandle";
 import UploadPhotoPanel from "../UploadPhoto/UploadPhoto";
 import PreviewPhotoPanel from "../PreviewPhotos/PreviewPhotos";
-import PhotoSplit from "../PhotoSplit/PhotoSplit";
-import AddHandle from "../AddHandle/AddHandle";
 import PhotoSplitPanel from "../PhotoSplitPanel/PhotoSplitPanel";
 
 const Panel = (props) => {

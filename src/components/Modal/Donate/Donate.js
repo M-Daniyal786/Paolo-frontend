@@ -45,9 +45,10 @@ const Donate = () => {
         <>
           <TextField
             fullWidth
-            variant="outlined"
-            placeholder="Your amount"
             value={amount}
+            placeholder="$25"
+            variant="outlined"
+            label="Your amount"
           />
           <br />
 

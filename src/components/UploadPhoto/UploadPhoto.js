@@ -12,6 +12,8 @@ import {
   allUploadsSelected,
   allUploadsUnSelected,
   uploadSelected,
+  uploadsDropped,
+  singleUploadDropped,
 } from "../../store/uploads";
 import { bytesToSize } from "../../utils/utilityFunctions";
 import FileDropZone from "../FileDropZone/FileDropZone";
@@ -27,53 +29,28 @@ const UploadPhotoPanel = () => {
   const onSelectAllImages = () => dispatch(allUploadsSelected());
   const onUnSelectAllImages = () => dispatch(allUploadsUnSelected());
 
-  const onDrop = useCallback((acceptedFiles) => {
-    let totalSizeInBytes = 0;
-    dispatch(uploadStarted());
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
-      totalSizeInBytes += file.size;
-      reader.readAsDataURL(file);
-      reader.onabort = () => console.log("file reading was aborted");
-      reader.onerror = () => console.log("file reading has failed");
-      reader.onload = () => {
-        // Do whatever you want with the file contents
-        dispatch(
-          uploadAdded({
-            path: file.path,
-            name: file.name,
-            url: reader.result,
-            selected: false,
-          })
-        );
-      };
-    });
-    console.log(bytesToSize(totalSizeInBytes), "Total Size");
-    dispatch(uploadEnded());
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
   return (
     <div className="control-panel">
       <div className="crop-controls">
-        {/* <div {...getRootProps({ className: "dropzone" })}>
-          <input {...getInputProps()} />
-          <p>Drag 'n' drop some files here, or click to select files</p>
-        </div> */}
-
         <FileDropZone />
 
         <ImagesContainer
+          type="original"
+          images={uploads.files}
           selectedType="selected"
           header="Uploaded Images"
-          images={uploads.files}
           onSelectImage={onSelectImage}
         />
 
         <div className="crop-controls-info">
           <p>Total images uploaded: {uploads.files.length}</p>
           <p>Total images selected: {selectedUploads.length}</p>
+        </div>
+        <div
+          className="crop-controls-info"
+          style={{ justifyContent: "center" }}
+        >
+          <p>Total upload size: {uploads.totalUploadSize}</p>
         </div>
 
         <div className="crop-controls-buttons">
@@ -86,7 +63,9 @@ const UploadPhotoPanel = () => {
         </div>
       </div>
 
-      <ControlPanelTip tip="Tip: Select images you want to crop and drag them on the artboard." />
+      <ControlPanelTip
+        tip={`Tip: Select images you want to crop and drag them on the artboard. Your total upload size is ${uploads.totalUploadSize}, please keep in mind the larger the upload size the more slow the app gets.`}
+      />
     </div>
   );
 };

@@ -1,39 +1,85 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@material-ui/core";
 import ColorizeIcon from "@material-ui/icons/Colorize";
 import { ChromePicker, GithubPicker } from "react-color";
 import ControlPanelTip from "../ControlPanelTip/ControlPanelTip";
 import { useDispatch, useSelector } from "react-redux";
-import { colorChanged, handleChanged } from "../../store/handleControls";
-import FileDropZone from "../FileDropZone/FileDropZone";
+import {
+  colorChanged,
+  fontSizeChanged,
+  handleChanged,
+} from "../../store/handleControls";
 import ImagesContainer from "../ImagesContainer/ImagesContainer";
-import { croppedImageSelectForHandle } from "../../store/croppedImages";
+import {
+  handleAddedOverAllImages,
+  handleAddedOverImage,
+  imageSelectedForHandlePreview,
+} from "../../store/uploads";
 
 const AddHandle = () => {
   const dispatch = useDispatch();
   const [picker, setPicker] = useState(false);
-  const croppedImages = useSelector((state) => state.croppedImages);
+  const uploads = useSelector((state) => state.uploads);
   const handleControls = useSelector((state) => state.handleControls);
 
-  const onSelectImage = (id) => dispatch(croppedImageSelectForHandle({ id }));
+  const onSelectImage = (id) => dispatch(imageSelectedForHandlePreview({ id }));
+
+  const onAddHandleOnImage = () =>
+    dispatch(
+      handleAddedOverImage({
+        handleColor: handleControls.color,
+        handle: handleControls.handle,
+        fontSize: handleControls.fontSize,
+      })
+    );
+
+  const onAddHandleOnAllImages = () =>
+    dispatch(
+      handleAddedOverAllImages({
+        handleColor: handleControls.color,
+        handle: handleControls.handle,
+        fontSize: handleControls.fontSize,
+      })
+    );
 
   return (
     <div className="control-panel">
       <div className="handle-control">
         <ImagesContainer
-          header="Cropped Images"
-          images={croppedImages.files}
+          type="cropped"
+          header="Available Images"
+          images={uploads.files}
           onSelectImage={onSelectImage}
           selectedType="selectedForHandle"
         />
 
+        <div className="crop-controls-buttons">
+          <Button variant="contained" onClick={onAddHandleOnImage}>
+            Add handle to image
+          </Button>
+          <Button variant="contained" onClick={onAddHandleOnAllImages}>
+            Add handle to all images
+          </Button>
+        </div>
+
         <p className="handle-control-label">Handle</p>
-        <input
-          name="handle"
-          placeholder="@YourHanlde"
-          value={handleControls.handle}
-          onChange={(event) => dispatch(handleChanged(event.target.value))}
-        />
+
+        <div>
+          <input
+            name="handle"
+            placeholder="@YourHanlde"
+            value={handleControls.handle}
+            onChange={(event) => dispatch(handleChanged(event.target.value))}
+          />
+
+          <input
+            name="font"
+            type="number"
+            placeholder="font size"
+            value={handleControls.fontSize}
+            onChange={(event) => dispatch(fontSizeChanged(event.target.value))}
+          />
+        </div>
         <br />
         <hr />
 

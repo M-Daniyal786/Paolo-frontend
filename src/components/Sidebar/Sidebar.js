@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
 import BackupIcon from "@material-ui/icons/Backup";
 import VerticalSplitIcon from "@material-ui/icons/VerticalSplit";
 import StayCurrentPortraitIcon from "@material-ui/icons/StayCurrentPortrait";
+import AppsIcon from "@material-ui/icons/Apps";
 
 const Sidebar = (props) => {
   const { active, setActive } = props;
@@ -22,14 +23,13 @@ const Sidebar = (props) => {
           className={active === 1 ? "selected" : ""}
         >
           <p style={{ fontSize: "20px", marginBottom: "6px" }}>@</p>
-          {/* <BackupIcon fontSize="large" /> */}
           <p>Add Hanlde</p>
         </li>
         <li
           onClick={() => setActive(2)}
           className={active === 2 ? "selected" : ""}
         >
-          <VerticalSplitIcon fontSize="large" />
+          <AppsIcon fontSize="large" />
           <p>Photo Split</p>
         </li>
         <li

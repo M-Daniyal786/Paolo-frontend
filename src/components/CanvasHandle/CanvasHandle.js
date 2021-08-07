@@ -1,44 +1,41 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ImageHandleCanvas from "../ImageHandleCanvas/ImageHandleCanvas";
-import testImage from "../../assets/photo-1479936343636-73cdc5aae0c3.jpeg";
-import { Button } from "@material-ui/core";
+import BlankCanvas from "../../assets/illustrations/blank_canvas.svg";
 
 const CanvasHandle = () => {
   const canvas = useRef(null);
-  const dispatch = useDispatch();
+  const uploads = useSelector((state) => state.uploads);
   const [selectedForHandle, setSelectedForHandle] = useState(null);
-  const croppedImages = useSelector((state) => state.croppedImages);
 
-  useEffect(() => {
-    const selected = croppedImages.files.findIndex(
+  const getSelectedForHandleImage = () => {
+    const selectedIndex = uploads.files.findIndex(
       (value) => value.selectedForHandle === true
     );
-    if (selected >= 0) {
-      setSelectedForHandle(croppedImages.files[selected]);
-    }
-  }, [croppedImages.files, selectedForHandle]);
 
-  const addHandleOverImage = () => {
-    console.log(canvas.current);
+    if (selectedIndex >= 0) setSelectedForHandle(uploads.files[selectedIndex]);
   };
+
+  useEffect(() => {
+    getSelectedForHandleImage();
+  }, [uploads]);
 
   return (
     <div className="canvas">
       <p className="canvas-header">Add Handle</p>
-      <div className="canvas-page">
-        <ImageHandleCanvas
-          setCanvas={(value) => console.log(value)}
-          image={selectedForHandle ? selectedForHandle.url : testImage}
-        />
-      </div>
-      <Button
-        className="canvas-action-button"
-        variant="contained"
-        onClick={addHandleOverImage}
-      >
-        Add Handle
-      </Button>
+      {selectedForHandle ? (
+        <div className="canvas-page">
+          <ImageHandleCanvas
+            image={selectedForHandle.croppedURL}
+            setCanvas={(value) => (canvas.current = value)}
+          />
+        </div>
+      ) : (
+        <div className="canvas-illustration">
+          <img alt="blank-canvas" src={BlankCanvas} />
+          <p>No image selected! The canvas is blank.</p>
+        </div>
+      )}
     </div>
   );
 };

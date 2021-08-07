@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const slice = createSlice({
   name: "UI",
   initialState: {
+    activeTab: 0,
     modal: false,
     loading: false,
     modalType: null,
@@ -23,6 +24,9 @@ const slice = createSlice({
     modalTypeChanged: (UI, action) => {
       UI.modalType = action.payload;
     },
+    activeTabChanged: (UI, action) => {
+      UI.activeTab = action.payload;
+    },
   },
 });
 
@@ -32,5 +36,6 @@ export const {
   modalClosed,
   UILoadingStarted,
   modalTypeChanged,
+  activeTabChanged,
 } = slice.actions;
 export default slice.reducer;

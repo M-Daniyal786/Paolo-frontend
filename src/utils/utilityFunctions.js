@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
-export const downloadImages = (images, zipName) => {
+export const downloadImages = (images, zipName, isForEmail = false) => {
   let index = 0;
   const zip = new JSZip();
   images.forEach((image) => {
@@ -14,6 +14,7 @@ export const downloadImages = (images, zipName) => {
     );
     index++;
   });
+  if (isForEmail) return zip.generateAsync({ type: "blob" });
   zip.generateAsync({ type: "blob" }).then(function (content) {
     saveAs(content, zipName);
   });

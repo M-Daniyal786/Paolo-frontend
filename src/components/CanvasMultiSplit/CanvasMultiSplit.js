@@ -2,11 +2,12 @@ import { Button } from "@material-ui/core";
 import React, { useRef, useEffect, useState } from "react";
 import Cropper from "react-cropper";
 import { useDispatch, useSelector } from "react-redux";
-import image from "../../assets/photo-1479936343636-73cdc5aae0c3.jpeg";
+import empty_svg from "../../assets/illustrations/empty.svg";
 import {
-  croppedImageAdded,
-  croppedImagesAdded,
-} from "../../store/croppedImages";
+  getLastImageID,
+  getSelectedForMultiCrop,
+  multiSplitImagesAdded,
+} from "../../store/uploads";
 
 const data = {
   1: { top: 0, left: 0, width: 166.66, height: 166.66 },
@@ -33,19 +34,28 @@ const data = {
 
 const CanvasMultiSplit = () => {
   let splits = 1;
-  const cropper = useRef(null);
   const nineCroppedImages = [];
   const dispatch = useDispatch();
+  const [image, setImage] = useState();
+  const [cropper, setCropper] = useState(null);
+  const uploads = useSelector((state) => state.uploads);
   const croppedImages = useSelector((state) => state.croppedImages);
 
   const onStartNineSplit = () => {
-    const cropperInstance = cropper.current.cropper;
+    const originalImage = getSelectedForMultiCrop(uploads);
+    const cropperInstance = cropper;
+    cropper.minCropBoxHeight = 100;
+    cropper.minCropBoxWidth = 100;
     cropperInstance.setCropBoxData(data[splits]);
 
     splits += 1;
     if (splits <= 10) {
       nineCroppedImages.push({
-        url: cropperInstance.getCroppedCanvas().toDataURL("image/jpeg", 0.8),
+        url: originalImage.url,
+        croppedURL: cropperInstance
+          .getCroppedCanvas()
+          .toDataURL("image/jpeg", 0.8),
+        duplicate: true,
       });
       setTimeout(() => {
         onStartNineSplit();
@@ -58,45 +68,78 @@ const CanvasMultiSplit = () => {
   };
 
   const appendCroppedImages = () => {
-    let lastId =
-      croppedImages.files.length > 0
-        ? croppedImages.files[croppedImages.files.length - 1].id
-        : 0;
+    let lastId = getLastImageID(uploads);
+
+    if (lastId >= 1) lastId++;
+
     nineCroppedImages.forEach((element) => {
-      lastId++;
       element.id = lastId;
+      lastId++;
     });
-    dispatch(croppedImagesAdded(nineCroppedImages, lastId));
+    dispatch(multiSplitImagesAdded({ nineCroppedImages, lastId }));
   };
+
+  const getImageSelectedForCrop = () => {
+    const index = uploads.files.findIndex(
+      (value) => value.selectedForCrop === true
+    );
+
+    if (index >= 0) setImage(uploads.files[index].croppedURL);
+    if (cropper)
+      setTimeout(() => {
+        cropper.setCropBoxData({ width: 500, height: 500 });
+      }, 100);
+  };
+
+  useEffect(() => {
+    getImageSelectedForCrop();
+  }, [uploads]);
+
+  useEffect(() => {
+    if (cropper)
+      setTimeout(() => {
+        cropper.setCropBoxData({ width: 500, height: 500 });
+      }, 100);
+  }, [cropper]);
 
   return (
     <div className="canvas">
-      <p className="canvas-header">Insta Split</p>
-      <div className="canvas-page">
-        <Cropper
-          src={image}
-          viewMode={3}
-          ref={cropper}
-          cropBoxMovable={false}
-          cropBoxResizable={false}
-          initialAspectRatio={1 / 1}
-          style={{
-            height: "100%",
-            width: "100%",
-            backgroundColor: "teal",
-          }}
-          onInitialized={(instance) => {
-            setTimeout(() => {
-              instance.setCropBoxData({ width: 500, height: 500 });
-            }, 50);
-          }}
-        />
-      </div>
+      <p className="canvas-header">Multi Image Split</p>
+
+      {image ? (
+        <div className="canvas-page">
+          <Cropper
+            src={image}
+            viewMode={3}
+            ref={cropper}
+            cropBoxMovable={true}
+            cropBoxResizable={false}
+            // minCropBoxHeight={500}
+            // minCropBoxWidth={500}
+            initialAspectRatio={1 / 1}
+            style={{
+              height: "100%",
+              width: "100%",
+              backgroundColor: "teal",
+            }}
+            onInitialized={(instance) => {
+              setCropper(instance);
+            }}
+          />
+        </div>
+      ) : (
+        <div className="canvas-illustration">
+          <img alt="blank-canvas" src={empty_svg} />
+          <p>No image choosen! Its all empty.</p>
+        </div>
+      )}
+
       <Button
         variant="contained"
+        className="canvas-action-button"
         onClick={() => onStartNineSplit(0, 0, 166.66, 166.66)}
       >
-        Crop Photos
+        Crop Picture
       </Button>
     </div>
   );
